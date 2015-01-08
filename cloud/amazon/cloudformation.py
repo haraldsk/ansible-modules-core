@@ -218,7 +218,10 @@ def main():
     template_parameters = module.params['template_parameters']
     tags = module.params['tags']
 
-    ec2_url, aws_access_key, aws_secret_key, region = get_ec2_creds(module)
+    region, ec2_url, boto_params = get_aws_connection_info(module)
+    aws_access_key = boto_params['aws_access_key_id']
+    aws_secret_key = boto_params['aws_secret_access_key']
+    security_token = boto_params['security_token']
 
     kwargs = dict()
     if tags is not None:
@@ -236,6 +239,7 @@ def main():
                   region,
                   aws_access_key_id=aws_access_key,
                   aws_secret_access_key=aws_secret_key,
+                  security_token=security_token
               )
     except boto.exception.NoAuthHandlerFound, e:
         module.fail_json(msg=str(e))
